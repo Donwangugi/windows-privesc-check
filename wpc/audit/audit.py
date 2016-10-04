@@ -878,8 +878,15 @@ class audit(auditbase):
         app = appendix("Windows Services")
         app.set_preamble("The following windows services were configured at the time of the audit.")
         app.add_table_row(["Shortname", "Longname", "Status", "Run As", "Description", "Path"])
+        
+        if self.options.service_list != []:
+            service_list = [s for s in services().get_services() if s.get_name() in self.options.service_list]
+        elif self.options.service_name != False:
+            service_list = [s for s in services().get_services() if s.get_name() == self.options.service_name]
+        else:
+            service_list = [s for s in services().get_services()]
+        for s in service_list:
 
-        for s in services().get_services():
             if self.options.do_appendices:
                 fields = []
                 fields.append(s.get_name())
@@ -889,7 +896,7 @@ class audit(auditbase):
                 fields.append(s.get_long_description())
                 fields.append(s.get_exe_path_clean())
                 app.add_table_row(fields)
-    
+                
             #
             # Check if service runs as a domain/local user
             #

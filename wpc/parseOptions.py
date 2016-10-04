@@ -38,6 +38,8 @@ def parseOptions():
     examine.add_option("-r", "--registry",  dest = "do_registry",      default = False, action = "store_true", help = "Registry Settings + Permissions")
     examine.add_option("-R", "--processes", dest = "do_processes",     default = False, action = "store_true", help = "Processes")
     examine.add_option("-S", "--services",  dest = "do_services",      default = False, action = "store_true", help = "Windows Services")
+    examine.add_option("-q", "--servicename",  dest = "service_name",      default = False, help = "Changes -S behaviour. Specifies specific service")
+    examine.add_option("-Q", "--servicelist",  dest = "service_list",      default = [], action = "append", help = "Changes -S behaviour. Specifies specific services")
     examine.add_option("-t", "--paths",     dest = "do_paths",         default = False, action = "store_true", help = "PATH")
     examine.add_option("-T", "--patches",   dest = "patchfile",                                                help = "Patches.  Arg is filename of xlsx patch info.  Download from http://go.microsoft.com/fwlink/?LinkID=245778 or pass 'auto' to fetch automatically")
     examine.add_option("-U", "--users",     dest = "do_users",         default = False, action = "store_true", help = "Users")
@@ -95,6 +97,10 @@ def parseOptions():
             
         if (options.ignore_principal_list or options.ignore_principal_file) and (options.exploitable_by_list or options.exploitable_by_file):
             print "[E] When using -b or -B, it doesn't make sense to use -x or -X"
+            sys.exit()
+
+        if (options.service_name or options.service_list) and not options.do_services):
+            print "[E] When using -q or -Q, you must specify -S"
             sys.exit()
         
         # TODO check file is writable.
